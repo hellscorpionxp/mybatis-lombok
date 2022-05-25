@@ -33,6 +33,7 @@ public class LombokPlugin extends PluginAdapter {
     importedTypes.add(new FullyQualifiedJavaType("lombok.Builder"));
     importedTypes.add(new FullyQualifiedJavaType("com.baomidou.mybatisplus.annotation.TableId"));
     importedTypes.add(new FullyQualifiedJavaType("com.baomidou.mybatisplus.annotation.IdType"));
+    importedTypes.add(new FullyQualifiedJavaType("com.baomidou.mybatisplus.annotation.TableField"));
     importedTypes.add(new FullyQualifiedJavaType("com.fasterxml.jackson.annotation.JsonFormat"));
     importedTypes.add(new FullyQualifiedJavaType("io.swagger.annotations.ApiModelProperty"));
     topLevelClass.addImportedTypes(importedTypes);
