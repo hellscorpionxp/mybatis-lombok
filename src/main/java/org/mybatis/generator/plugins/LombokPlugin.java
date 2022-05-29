@@ -11,6 +11,7 @@ import org.mybatis.generator.api.IntrospectedTable;
 import org.mybatis.generator.api.PluginAdapter;
 import org.mybatis.generator.api.dom.java.Field;
 import org.mybatis.generator.api.dom.java.FullyQualifiedJavaType;
+import org.mybatis.generator.api.dom.java.Interface;
 import org.mybatis.generator.api.dom.java.JavaVisibility;
 import org.mybatis.generator.api.dom.java.Method;
 import org.mybatis.generator.api.dom.java.TopLevelClass;
@@ -80,6 +81,17 @@ public class LombokPlugin extends PluginAdapter {
   }
 
   @Override
+  public boolean clientGenerated(Interface interfaze, IntrospectedTable introspectedTable) {
+    String entityName = introspectedTable.getBaseRecordType();
+    String shortEntityName = entityName.substring(entityName.lastIndexOf(".") + 1);
+    Set<FullyQualifiedJavaType> importedTypes = new HashSet<>();
+    importedTypes.add(new FullyQualifiedJavaType("com.baomidou.mybatisplus.core.mapper.BaseMapper"));
+    interfaze.addImportedTypes(importedTypes);
+    interfaze.addSuperInterface(new FullyQualifiedJavaType(String.format("BaseMapper<%s>", shortEntityName)));
+    return true;
+  }
+
+  @Override
   public List<GeneratedJavaFile> contextGenerateAdditionalJavaFiles(IntrospectedTable introspectedTable) {
     List<GeneratedJavaFile> generatedJavaFiles = new ArrayList<>();
     generatedJavaFiles.add(generateService(introspectedTable));
@@ -99,7 +111,6 @@ public class LombokPlugin extends PluginAdapter {
     clazz.setVisibility(JavaVisibility.PUBLIC);
     Set<FullyQualifiedJavaType> importedTypes = new HashSet<>();
     importedTypes.add(new FullyQualifiedJavaType(entityName));
-    importedTypes.add(new FullyQualifiedJavaType("com.baomidou.mybatisplus.core.mapper.BaseMapper"));
     importedTypes.add(new FullyQualifiedJavaType("com.baomidou.mybatisplus.extension.service.IService"));
     importedTypes.add(new FullyQualifiedJavaType("com.baomidou.mybatisplus.extension.service.impl.ServiceImpl"));
     importedTypes.add(new FullyQualifiedJavaType("org.springframework.stereotype.Service"));
@@ -108,7 +119,7 @@ public class LombokPlugin extends PluginAdapter {
     importedTypes.add(new FullyQualifiedJavaType(mapperName));
     clazz.addImportedTypes(importedTypes);
     clazz.addSuperInterface(new FullyQualifiedJavaType(String.format("IService<%s>", shortEntityName)));
-    clazz.setSuperClass(String.format("ServiceImpl<BaseMapper<%s>, %s>", shortEntityName, shortEntityName));
+    clazz.setSuperClass(String.format("ServiceImpl<%s, %s>", shortMapperName, shortEntityName));
     clazz.addAnnotation("@Service");
     clazz.addAnnotation("@Slf4j");
     Field mapperField = new Field(mapperFieldName, new FullyQualifiedJavaType(mapperName));
