@@ -64,8 +64,8 @@ public class LombokPlugin extends PluginAdapter {
     if ("id".equalsIgnoreCase(field.getName())) {
       field.addAnnotation("@TableId(type = IdType.AUTO)");
     }
-    if ("ctime".equalsIgnoreCase(field.getName()) || "utime".equalsIgnoreCase(field.getName())
-        || "createTime".equalsIgnoreCase(field.getName()) || "updateTime".equalsIgnoreCase(field.getName())) {
+    if ("Date".equals(field.getType().getShortName()) || "LocalDate".equals(field.getType().getShortName())
+        || "LocalDateTime".equals(field.getType().getShortName())) {
       field.addAnnotation("@JsonFormat(pattern = \"yyyy-MM-dd HH:mm:ss\")");
     }
     if (SqlReservedWords.containsWord(introspectedColumn.getActualColumnName())) {
